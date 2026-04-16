@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Кто ты? — FutureSim</title>
+  <meta name="description" content="Выбери свою аудиторию и начни симуляцию карьеры будущего">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Yandex Metrika -->
+  <script type="text/javascript">
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+    m[i].l=1*new Date();
+    for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}
+    k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");
+    ym(107245981,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true});
+  </script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/107245981" style="position:absolute;left:-9999px;" alt=""/></div></noscript>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BMXPMT81Y5"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-BMXPMT81Y5');
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0a;
+      --accent: #ccff00;
+      --accent-glow: rgba(204,255,0,0.5);
+      --accent-dim: rgba(204,255,0,0.12);
+      --card-bg: #111111;
+      --border: rgba(255,255,255,0.08);
+      --text: #ffffff;
+      --text-muted: rgba(255,255,255,0.48);
+      --text-dim: rgba(255,255,255,0.22);
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'Space Grotesk', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── HEADER ── */
+    header {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 0 40px;
+      height: 72px;
+      border-bottom: 1px solid var(--border);
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .logo {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+      flex-shrink: 0;
+    }
+    .logo span { color: var(--accent); text-shadow: 0 0 15px var(--accent-glow); }
+
+    /* ── PROGRESS ── */
+    .progress-bar {
+      position: fixed;
+      top: 72px; left: 0; right: 0;
+      height: 2px;
+      background: var(--border);
+      z-index: 99;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 14%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent-glow);
+      transition: width 0.5s ease;
+    }
+
+    /* step indicator */
+    .step-indicator {
+      position: fixed;
+      top: 82px; right: 40px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      z-index: 99;
+    }
+    .si-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: all 0.3s;
+    }
+    .si-dot.active {
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent-glow);
+      width: 18px;
+      border-radius: 3px;
+    }
+    .si-dot.done { background: rgba(204,255,0,0.35); }
+
+    /* ── MAIN ── */
+    main {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 110px 24px 60px;
+    }
+
+    /* ── HEADER CONTENT ── */
+    .page-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(204,255,0,0.2);
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+      animation: fadeUp 0.5s 0.05s ease both;
+    }
+    .eyebrow-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: blink 2s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    .page-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.05;
+      text-align: center;
+      margin-bottom: 14px;
+      animation: fadeUp 0.5s 0.1s ease both;
+    }
+    .page-title em { font-style: normal; color: var(--accent); }
+
+    .page-sub {
+      font-size: 1rem;
+      color: var(--text-muted);
+      text-align: center;
+      max-width: 440px;
+      line-height: 1.7;
+      margin-bottom: 56px;
+      animation: fadeUp 0.5s 0.15s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── CARDS GRID ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      width: 100%;
+      max-width: 820px;
+      animation: fadeUp 0.5s 0.2s ease both;
+    }
+
+    /* ── BASE CARD ── */
+    .aud-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 28px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
+                  border-color 0.25s,
+                  box-shadow 0.25s;
+      text-decoration: none;
+      display: block;
+    }
+    .aud-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 30%, rgba(204,255,0,0.06), transparent 65%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .aud-card:hover::before { opacity: 1; }
+
+    /* ACTIVE card */
+    .aud-card.active-card {
+      border-color: rgba(204,255,0,0.35);
+    }
+    .aud-card.active-card:hover {
+      transform: translateY(-6px) scale(1.01);
+      border-color: rgba(204,255,0,0.6);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(204,255,0,0.15);
+    }
+    .aud-card.active-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent 70%);
+    }
+
+    /* LOCKED card */
+    .aud-card.locked-card {
+      cursor: default;
+      opacity: 0.55;
+    }
+    .aud-card.locked-card:hover {
+      transform: none;
+      border-color: var(--border);
+      box-shadow: none;
+    }
+    .aud-card.locked-card::before { display: none; }
+
+    /* Card content */
+    .card-emoji-wrap {
+      width: 60px; height: 60px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.9rem;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .active-card .card-emoji-wrap {
+      background: var(--accent-dim);
+      border: 1px solid rgba(204,255,0,0.2);
+    }
+    .locked-card .card-emoji-wrap {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+    }
+
+    .card-age-tag {
+      position: absolute;
+      top: -6px; right: -6px;
+      background: var(--accent);
+      color: #0a0a0a;
+      font-size: 0.6rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 100px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .locked-card .card-age-tag {
+      background: rgba(255,255,255,0.15);
+      color: var(--text-muted);
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+    .active-card .card-title { color: var(--text); }
+    .locked-card .card-title { color: rgba(255,255,255,0.6); }
+
+    .card-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 24px;
+    }
+
+    /* Tags */
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .card-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 100px;
+      letter-spacing: 0.04em;
+    }
+    .active-card .card-tag {
+      background: var(--accent-dim);
+      border: 1px solid rgba(204,255,0,0.18);
+      color: var(--accent);
+    }
+    .locked-card .card-tag {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    /* CTA row */
+    .card-cta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #0a0a0a;
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 0.875rem;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .card-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(204,255,0,0.35);
+    }
+
+    .card-soon-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 8px;
+      letter-spacing: 0.04em;
+    }
+    .soon-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      animation: blink 2.5s infinite;
+    }
+
+    /* notify input (appears on locked card click) */
+    .notify-row {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .notify-row.visible { display: flex; }
+    .notify-input {
+      flex: 1;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      padding: 9px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .notify-input:focus { border-color: rgba(204,255,0,0.4); }
+    .notify-input::placeholder { color: var(--text-dim); }
+    .notify-btn {
+      background: var(--accent-dim);
+      border: 1px solid rgba(204,255,0,0.3);
+      color: var(--accent);
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 9px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .notify-btn:hover { background: rgba(204,255,0,0.2); }
+
+    /* locked overlay pulse */
+    .lock-icon {
+      position: absolute;
+      top: 20px; right: 20px;
+      font-size: 1rem;
+      opacity: 0.35;
+    }
+
+    /* ── ACTIVE CARD HIGHLIGHT (big one) ── */
+    .aud-card.active-card .card-emoji-wrap::after {
+      content: '';
+      position: absolute;
+      inset: -10px;
+      border-radius: 20px;
+      background: radial-gradient(circle, rgba(204,255,0,0.12), transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ── TRUST ROW ── */
+    .trust-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 40px;
+      animation: fadeUp 0.5s 0.35s ease both;
+      flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    .trust-icon {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      border: 1px solid rgba(204,255,0,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 640px) {
+      header { padding: 0 20px; }
+      .step-indicator { right: 20px; }
+      main { padding: 100px 16px 48px; }
+      .cards-grid { grid-template-columns: 1fr; gap: 12px; }
+      .aud-card { padding: 24px 20px; }
+      .page-title { font-size: 1.9rem; }
+      .trust-row { gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <a href="index.html" class="logo">Future<span>Sim</span></a>
+</header>
+
+<div class="progress-bar">
+  <div class="progress-fill"></div>
+</div>
+
+<div class="step-indicator">
+  <div class="si-dot active"></div>
+  <div class="si-dot"></div>
+  <div class="si-dot"></div>
+  <div class="si-dot"></div>
+  <div class="si-dot"></div>
+</div>
+
+<!-- ── MAIN ── -->
+<main>
+  <div class="page-eyebrow"><span class="eyebrow-dot"></span> Шаг 1 — выбор пути</div>
+
+  <h1 class="page-title">Кто ты<br>в <em>этом симуляторе?</em></h1>
+  <p class="page-sub">Выбери свою ситуацию — и получишь прогноз, заточенный именно под тебя. Не под всех сразу.</p>
+
+  <div class="cards-grid">
+
+    <!-- ══ CARD 1: SWITCHERS 25-35 — ACTIVE ══ -->
+    <a href="profile.html" class="aud-card active-card" id="card-switcher">
+      <div class="card-emoji-wrap">
+        🔄
+        <span class="card-age-tag">25–35</span>
+      </div>
+      <div class="card-title">Хочу сменить профессию</div>
+      <div class="card-desc">
+        Чувствуешь, что текущая работа — не твоё? Хочешь найти направление, которое даст и деньги, и смысл, но не знаешь с чего начать.
+      </div>
+      <div class="card-tags">
+        <span class="card-tag">🔥 Доступно сейчас</span>
+        <span class="card-tag">Карьерный свитч</span>
+        <span class="card-tag">Новый старт</span>
+      </div>
+      <div class="card-cta">
+        <span class="card-btn">Начать симуляцию →</span>
+        <span style="font-size:0.78rem;color:var(--text-muted)">~3 минуты</span>
+      </div>
+    </a>
+
+    <!-- ══ CARD 2: STUDENTS — LOCKED ══ -->
+    <div class="aud-card locked-card" onclick="showNotify('notify-student')" id="card-student">
+      <div class="lock-icon">🔒</div>
+      <div class="card-emoji-wrap">
+        📚
+        <span class="card-age-tag">1–2 курс</span>
+      </div>
+      <div class="card-title">Студент — не та специальность</div>
+      <div class="card-desc">
+        Поступил, учишься — но уже сомневаешься в выборе. Узнай, какой путь подойдёт тебе на самом деле, пока ещё есть время изменить курс.
+      </div>
+      <div class="card-tags">
+        <span class="card-tag">Смена специальности</span>
+        <span class="card-tag">Первые шаги</span>
+      </div>
+      <div class="card-cta">
+        <span class="card-soon-badge"><span class="soon-dot"></span> Скоро доступно</span>
+      </div>
+      <div class="notify-row" id="notify-student">
+        <input class="notify-input" type="email" placeholder="Твой email — уведомим первым">
+        <button class="notify-btn" onclick="submitNotify(event, 'student')">Уведомить</button>
+      </div>
+    </div>
+
+    <!-- ══ CARD 3: SCHOOLERS — LOCKED ══ -->
+    <div class="aud-card locked-card" onclick="showNotify('notify-school')" id="card-school">
+      <div class="lock-icon">🔒</div>
+      <div class="card-emoji-wrap">
+        🎓
+        <span class="card-age-tag">14–17</span>
+      </div>
+      <div class="card-title">Школьник — выбираю профессию</div>
+      <div class="card-desc">
+        Ещё не определился с направлением? Симулятор поможет понять, какой тип мышления у тебя сильнее — и куда это может привести через 10 лет.
+      </div>
+      <div class="card-tags">
+        <span class="card-tag">Выбор профессии</span>
+        <span class="card-tag">ЕГЭ и дальше</span>
+      </div>
+      <div class="card-cta">
+        <span class="card-soon-badge"><span class="soon-dot"></span> Скоро доступно</span>
+      </div>
+      <div class="notify-row" id="notify-school">
+        <input class="notify-input" type="email" placeholder="Твой email — уведомим первым">
+        <button class="notify-btn" onclick="submitNotify(event, 'school')">Уведомить</button>
+      </div>
+    </div>
+
+    <!-- ══ CARD 4: 40+ — LOCKED ══ -->
+    <div class="aud-card locked-card" onclick="showNotify('notify-senior')" id="card-senior">
+      <div class="lock-icon">🔒</div>
+      <div class="card-emoji-wrap">
+        🌱
+        <span class="card-age-tag">40+</span>
+      </div>
+      <div class="card-title">Хочу освоить новое в 40+</div>
+      <div class="card-desc">
+        Никогда не поздно. Жизненный опыт — это актив, а не балласт. Узнай, какие профессии будущего органично сочетаются с тем, что ты уже умеешь.
+      </div>
+      <div class="card-tags">
+        <span class="card-tag">Новое начало</span>
+        <span class="card-tag">Опыт как актив</span>
+      </div>
+      <div class="card-cta">
+        <span class="card-soon-badge"><span class="soon-dot"></span> Скоро доступно</span>
+      </div>
+      <div class="notify-row" id="notify-senior">
+        <input class="notify-input" type="email" placeholder="Твой email — уведомим первым">
+        <button class="notify-btn" onclick="submitNotify(event, 'senior')">Уведомить</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── TRUST ROW ── -->
+  <div class="trust-row">
+    <div class="trust-item">
+      <div class="trust-icon">⏱</div>
+      <span>Всего 3 минуты</span>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">🔒</div>
+      <span>Без регистрации</span>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">🧠</div>
+      <span>8 психотипов</span>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">💾</div>
+      <span>Данные только у тебя</span>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  // Сохраняем выбранную аудиторию
+  document.getElementById('card-switcher').addEventListener('click', function(e) {
+    localStorage.setItem('futureSim_audience', 'switcher');
+  });
+
+  // Показать поле email при клике на заглушку
+  function showNotify(id) {
+    const row = document.getElementById(id);
+    if (!row) return;
+    const isVisible = row.classList.contains('visible');
+    // Скрыть все остальные
+    document.querySelectorAll('.notify-row').forEach(r => r.classList.remove('visible'));
+    if (!isVisible) {
+      row.classList.add('visible');
+      setTimeout(() => row.querySelector('input').focus(), 50);
+    }
+  }
+
+  // Отправка email (заглушка — сохраняем в localStorage)
+  function submitNotify(e, type) {
+    e.stopPropagation();
+    const row = e.target.closest('.notify-row');
+    const input = row.querySelector('input');
+    const email = input.value.trim();
+
+    if (!email || !email.includes('@')) {
+      input.style.borderColor = 'rgba(255,80,80,0.5)';
+      setTimeout(() => { input.style.borderColor = ''; }, 1500);
+      return;
+    }
+
+    // Сохраняем
+    const waitlist = JSON.parse(localStorage.getItem('futureSim_waitlist') || '{}');
+    waitlist[type] = email;
+    localStorage.setItem('futureSim_waitlist', JSON.stringify(waitlist));
+
+    // Показываем успех
+    row.innerHTML = `<span style="font-size:0.82rem;color:var(--accent);padding:8px 0">✓ Отлично! Уведомим тебя первым</span>`;
+  }
+
+  // Hover-эффект на активную карточку — лёгкое свечение курсора
+  const activeCard = document.getElementById('card-switcher');
+  activeCard.addEventListener('mousemove', function(e) {
+    const rect = this.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    this.style.setProperty('--mx', x + '%');
+    this.style.setProperty('--my', y + '%');
+  });
+</script>
+
+</body>
+</html>
