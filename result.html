@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Результат — FutureSim</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Yandex Metrika -->
+  <script type="text/javascript">
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+    m[i].l=1*new Date();
+    for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}
+    k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");
+    ym(107245981,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true});
+  </script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/107245981" style="position:absolute;left:-9999px;" alt=""/></div></noscript>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BMXPMT81Y5"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-BMXPMT81Y5');
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0a;
+      --accent: #ccff00;
+      --accent-glow: rgba(204,255,0,0.5);
+      --accent-dim: rgba(204,255,0,0.12);
+      --card-bg: #111111;
+      --border: rgba(255,255,255,0.08);
+      --text: #ffffff;
+      --text-muted: rgba(255,255,255,0.48);
+      --text-dim: rgba(255,255,255,0.22);
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'Space Grotesk', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; overflow-x: hidden; }
+
+    /* ── HEADER ── */
+    header {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 0 40px;
+      height: 72px;
+      border-bottom: 1px solid var(--border);
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(16px);
+    }
+    .logo { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; color: var(--text); text-decoration: none; letter-spacing: -0.02em; flex-shrink: 0; }
+    .logo span { color: var(--accent); text-shadow: 0 0 15px var(--accent-glow); }
+    .header-right { margin-left: auto; display: flex; gap: 10px; }
+
+    .progress-bar { position: fixed; top: 72px; left: 0; right: 0; height: 2px; background: var(--border); z-index: 99; }
+    .progress-fill { height: 100%; background: var(--accent); width: 80%; box-shadow: 0 0 8px var(--accent-glow); }
+
+    .step-indicator { position: fixed; top: 82px; right: 40px; display: flex; gap: 6px; z-index: 99; }
+    .si-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(204,255,0,0.35); }
+    .si-dot.active { background: var(--accent); box-shadow: 0 0 6px var(--accent-glow); width: 18px; border-radius: 3px; }
+
+    /* ── BTN ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent); color: #0a0a0a;
+      font-family: var(--font-body); font-weight: 700; font-size: 0.9rem;
+      padding: 10px 22px; border-radius: 8px; text-decoration: none;
+      border: none; cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(204,255,0,0.35); }
+    .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.2); box-shadow: none; }
+    .btn-large { font-size: 1rem; padding: 16px 36px; border-radius: 10px; }
+
+    /* ── HERO ── */
+    .result-hero {
+      padding: 96px 40px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-orb {
+      position: absolute; border-radius: 50%; pointer-events: none;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(204,255,0,0.06) 0%, transparent 65%);
+      top: -200px; left: 50%; transform: translateX(-50%);
+      animation: pulse 7s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{transform:translateX(-50%) scale(1)} 50%{transform:translateX(-50%) scale(1.1)} }
+
+    .reveal-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent-dim); border: 1px solid rgba(204,255,0,0.2);
+      color: var(--accent); font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      padding: 5px 14px; border-radius: 100px; margin-bottom: 28px;
+      animation: fadeUp 0.5s ease both;
+    }
+    .reveal-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    .hero-avatar {
+      font-size: 5.5rem; line-height: 1;
+      display: block; margin-bottom: 20px;
+      animation: popIn 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.15s both;
+      filter: drop-shadow(0 0 30px rgba(204,255,0,0.25));
+    }
+    @keyframes popIn { from{transform:scale(0.2);opacity:0} to{transform:scale(1);opacity:1} }
+
+    .hero-type {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 6vw, 4.2rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--accent);
+      text-shadow: 0 0 40px rgba(204,255,0,0.3);
+      margin-bottom: 10px;
+      animation: fadeUp 0.5s 0.3s ease both;
+    }
+    .hero-tagline {
+      font-size: 1.05rem; color: var(--text-muted);
+      margin-bottom: 20px;
+      animation: fadeUp 0.5s 0.4s ease both;
+    }
+
+    /* score bar */
+    .score-bar {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 100px; padding: 8px 16px;
+      font-size: 0.8rem; color: var(--text-muted);
+      margin-bottom: 48px;
+      animation: fadeUp 0.5s 0.5s ease both;
+    }
+    .score-dots { display: flex; gap: 4px; }
+    .sc-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+    .sc-dot.b { background: var(--accent); box-shadow: 0 0 5px var(--accent-glow); }
+    .sc-dot.a { background: rgba(100,160,255,0.6); }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ── CONTENT ── */
+    .content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 40px 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 32px;
+      animation: fadeUp 0.5s ease both;
+    }
+    .card-head {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 18px;
+    }
+    .card-icon { font-size: 1.1rem; }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 0.78rem; font-weight: 700;
+      color: var(--text-muted); letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── FORECAST ── */
+    .forecast-text { font-size: 0.975rem; line-height: 1.8; color: rgba(255,255,255,0.82); }
+    .forecast-text p { margin-bottom: 12px; }
+    .forecast-text p:last-child { margin-bottom: 0; }
+    .forecast-text strong { color: var(--accent); }
+
+    /* ── METRICS ── */
+    .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .metric {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 18px 14px; text-align: center;
+    }
+    .metric-val {
+      font-family: var(--font-display); font-size: 1.6rem; font-weight: 800;
+      letter-spacing: -0.03em; margin-bottom: 5px; line-height: 1;
+    }
+    .metric-val.green { color: var(--accent); }
+    .metric-val.yellow { color: #ffb840; }
+    .metric-val.red { color: #ff6060; }
+    .metric-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ── POWERS ── */
+    .powers-wrap { display: flex; flex-wrap: wrap; gap: 10px; }
+    .power-tag {
+      background: var(--accent-dim); border: 1px solid rgba(204,255,0,0.2);
+      color: var(--accent); font-size: 0.85rem; font-weight: 600;
+      padding: 8px 16px; border-radius: 100px;
+    }
+
+    /* ── BLURRED SECTIONS ── */
+    .blur-wrap {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .blur-overlay {
+      position: absolute;
+      inset: 0;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      background: rgba(10,10,10,0.7);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 10;
+      padding: 24px;
+    }
+    .blur-icon { font-size: 2rem; }
+    .blur-title {
+      font-family: var(--font-display); font-size: 1.2rem; font-weight: 800;
+      letter-spacing: -0.02em; text-align: center;
+    }
+    .blur-desc { font-size: 0.875rem; color: var(--text-muted); text-align: center; max-width: 320px; line-height: 1.6; }
+    .blur-price {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent-dim); border: 1px solid rgba(204,255,0,0.3);
+      color: var(--accent); font-size: 0.8rem; font-weight: 700;
+      padding: 6px 16px; border-radius: 100px;
+    }
+
+    /* ── SCENARIOS ── */
+    .scenarios-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .scenario-card {
+      border-radius: 16px; padding: 24px 20px;
+      border: 1.5px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      display: block;
+    }
+    .scenario-card::before {
+      content: ''; position: absolute; inset: 0;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .scenario-card:hover { transform: translateY(-4px); }
+
+    .scenario-card.startup { border-color: rgba(255,140,60,0.3); }
+    .scenario-card.startup::before { background: radial-gradient(circle at 30% 30%, rgba(255,140,60,0.07), transparent 65%); }
+    .scenario-card.startup:hover { border-color: rgba(255,140,60,0.6); box-shadow: 0 16px 40px rgba(255,140,60,0.15); }
+
+    .scenario-card.corp { border-color: rgba(100,160,255,0.3); }
+    .scenario-card.corp::before { background: radial-gradient(circle at 30% 30%, rgba(100,160,255,0.07), transparent 65%); }
+    .scenario-card.corp:hover { border-color: rgba(100,160,255,0.6); box-shadow: 0 16px 40px rgba(100,160,255,0.15); }
+
+    .scenario-card.selected-startup {
+      border-color: rgba(255,140,60,0.7) !important;
+      background: rgba(255,140,60,0.08) !important;
+      box-shadow: 0 0 0 2px rgba(255,140,60,0.2) !important;
+    }
+    .scenario-card.selected-corp {
+      border-color: rgba(100,160,255,0.7) !important;
+      background: rgba(100,160,255,0.08) !important;
+      box-shadow: 0 0 0 2px rgba(100,160,255,0.2) !important;
+    }
+
+    .sc-emoji { font-size: 2.2rem; margin-bottom: 14px; display: block; }
+    .sc-type { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+    .startup .sc-type { color: rgba(255,140,60,0.8); }
+    .corp    .sc-type { color: rgba(100,160,255,0.8); }
+    .sc-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.02em; }
+    .sc-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 18px; }
+
+    .sc-stats { display: flex; flex-direction: column; gap: 8px; }
+    .sc-stat { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; }
+    .sc-stat-label { color: var(--text-muted); }
+    .sc-stat-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; margin: 0 10px; overflow: hidden; }
+    .sc-stat-fill { height: 100%; border-radius: 2px; }
+    .startup .sc-stat-fill { background: rgba(255,140,60,0.7); }
+    .corp    .sc-stat-fill { background: rgba(100,160,255,0.7); }
+    .sc-stat-val { font-weight: 700; min-width: 28px; text-align: right; }
+    .startup .sc-stat-val { color: rgba(255,140,60,1); }
+    .corp    .sc-stat-val  { color: rgba(100,160,255,1); }
+
+    .sc-cta {
+      margin-top: 18px; padding-top: 16px;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .sc-cta-text { font-size: 0.82rem; font-weight: 600; }
+    .startup .sc-cta-text { color: rgba(255,140,60,1); }
+    .corp    .sc-cta-text  { color: rgba(100,160,255,1); }
+    .sc-arrow { font-size: 1.1rem; transition: transform 0.2s; }
+    .scenario-card:hover .sc-arrow { transform: translateX(4px); }
+
+    .scenarios-hint {
+      text-align: center; font-size: 0.82rem; color: var(--text-muted);
+      margin-top: 12px; padding: 12px;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    /* ── CHART ── */
+    .chart-wrap { height: 240px; position: relative; }
+
+    /* ── RISKS ── */
+    .risk-list { display: flex; flex-direction: column; gap: 14px; }
+    .risk-item {}
+    .risk-head { display: flex; justify-content: space-between; margin-bottom: 6px; }
+    .risk-name { font-size: 0.875rem; font-weight: 500; }
+    .risk-pct { font-size: 0.82rem; font-weight: 700; font-family: var(--font-display); }
+    .risk-track { height: 7px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; }
+    .risk-fill { height: 100%; border-radius: 4px; width: 0%; transition: width 1.4s cubic-bezier(0.4,0,0.2,1); }
+    .risk-fill.low { background: linear-gradient(90deg, var(--accent), #a8e000); }
+    .risk-fill.med { background: linear-gradient(90deg, #ffb840, #ffd680); }
+    .risk-fill.high { background: linear-gradient(90deg, #ff6060, #ff9060); }
+
+    /* ── FINAL CTA ── */
+    .final-cta {
+      background: var(--card-bg);
+      border: 1px solid rgba(204,255,0,0.15);
+      border-radius: 20px; padding: 40px 32px; text-align: center;
+    }
+    .final-cta h3 { font-family: var(--font-display); font-size: 1.7rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 10px; }
+    .final-cta h3 em { font-style: normal; color: var(--accent); }
+    .final-cta p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.65; margin-bottom: 28px; max-width: 480px; margin-left: auto; margin-right: auto; }
+    .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* ── PAYWALL MODAL ── */
+    .paywall-modal {
+      position: fixed; inset: 0; z-index: 999;
+      background: rgba(10,10,10,0.88);
+      backdrop-filter: blur(12px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .paywall-modal.open { display: flex; }
+    .paywall-box {
+      background: #161616;
+      border: 1px solid rgba(204,255,0,0.2);
+      border-radius: 24px;
+      padding: 40px 36px;
+      max-width: 480px; width: 100%;
+      text-align: center;
+      position: relative;
+      animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    .paywall-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(255,255,255,0.07); border: none;
+      color: var(--text-muted); font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .paywall-close:hover { background: rgba(255,255,255,0.12); }
+    .pw-emoji { font-size: 3rem; margin-bottom: 16px; display: block; }
+    .pw-title { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 8px; }
+    .pw-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.65; margin-bottom: 28px; }
+    .pw-features { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; text-align: left; }
+    .pw-feature { display: flex; align-items: flex-start; gap: 10px; font-size: 0.875rem; }
+    .pw-feature-icon { color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+    .pw-price {
+      display: flex; align-items: baseline; justify-content: center; gap: 8px;
+      margin-bottom: 20px;
+    }
+    .pw-price-val { font-family: var(--font-display); font-size: 2.8rem; font-weight: 800; color: var(--accent); letter-spacing: -0.04em; }
+    .pw-price-label { font-size: 0.85rem; color: var(--text-muted); }
+    .pw-note { font-size: 0.75rem; color: var(--text-dim); margin-top: 12px; }
+
+    /* ── SHARE ── */
+    .share-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+    .share-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+      color: var(--text-muted); font-size: 0.8rem; font-weight: 600;
+      padding: 8px 16px; border-radius: 100px; cursor: pointer;
+      transition: all 0.2s; font-family: var(--font-body);
+    }
+    .share-btn:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 640px) {
+      header { padding: 0 20px; }
+      .step-indicator { right: 20px; }
+      .result-hero { padding: 88px 20px 0; }
+      .content { padding: 32px 16px 80px; gap: 14px; }
+      .card { padding: 22px 18px; }
+      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+      .scenarios-grid { grid-template-columns: 1fr; }
+      .cta-btns { flex-direction: column; }
+      .paywall-box { padding: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── PAYWALL MODAL ── -->
+<div class="paywall-modal" id="paywallModal">
+  <div class="paywall-box">
+    <button class="paywall-close" onclick="closePaywall()">✕</button>
+    <span class="pw-emoji">🔓</span>
+    <div class="pw-title">Открыть полный прогноз</div>
+    <p class="pw-desc">Ты уже знаешь свой психотип. Теперь узнай полную картину — куда это приведёт и какие риски обойти.</p>
+    <div class="pw-features">
+      <div class="pw-feature"><span class="pw-feature-icon">📈</span><span>График дохода на 10 лет по двум сценариям</span></div>
+      <div class="pw-feature"><span class="pw-feature-icon">⚠️</span><span>Полный разбор факторов риска с процентами</span></div>
+      <div class="pw-feature"><span class="pw-feature-icon">🗺️</span><span>Персональный roadmap в выбранном сценарии</span></div>
+      <div class="pw-feature"><span class="pw-feature-icon">📄</span><span>PDF-отчёт для скачивания</span></div>
+    </div>
+    <div class="pw-price">
+      <div class="pw-price-val">299 ₽</div>
+      <div class="pw-price-label">единоразово</div>
+    </div>
+    <button class="btn btn-large" style="width:100%" onclick="simulatePurchase()">Открыть полный прогноз →</button>
+    <p class="pw-note">💳 ЮKassa · Robokassa · Telegram Stars · Без подписки</p>
+  </div>
+</div>
+
+<!-- ── HEADER ── -->
+<header>
+  <a href="index.html" class="logo">Future<span>Sim</span></a>
+  <div class="header-right">
+    <button class="btn btn-ghost" onclick="shareResult()" style="padding:8px 16px;font-size:0.82rem;">Поделиться</button>
+    <a href="test.html" class="btn btn-ghost" style="padding:8px 16px;font-size:0.82rem;">Пройти снова</a>
+  </div>
+</header>
+
+<div class="progress-bar"><div class="progress-fill"></div></div>
+<div class="step-indicator">
+  <div class="si-dot"></div>
+  <div class="si-dot"></div>
+  <div class="si-dot"></div>
+  <div class="si-dot active"></div>
+  <div class="si-dot"></div>
+</div>
+
+<!-- ── HERO ── -->
+<div class="result-hero" id="resultHero">
+  <div class="hero-orb"></div>
+  <div class="reveal-badge"><span class="reveal-dot"></span> Психотип определён</div>
+  <span class="hero-avatar" id="heroAvatar">🏛️</span>
+  <div class="hero-type" id="heroType">Загружаем...</div>
+  <p class="hero-tagline" id="heroTagline"></p>
+  <div class="score-bar">
+    <span style="font-size:0.75rem;margin-right:4px">Профиль:</span>
+    <div class="score-dots" id="scoreDots"></div>
+    <span id="scoreLabel" style="margin-left:4px"></span>
+  </div>
+</div>
+
+<!-- ── CONTENT ── -->
+<div class="content" id="mainContent">
+  <!-- Injected by JS -->
+</div>
+
+<script>
+// ── ДАННЫЕ ПСИХОТИПОВ ──
+const TYPES = [
+  {
+    score: 0, emoji: '🏛️', name: 'Архитектор систем',
+    tagline: 'Строишь мир на фундаменте логики и точности',
+    forecast: `<p>Ты — редкий тип мыслителя, способного удерживать сложные системы целиком. При смене карьеры твоя сила в том, что ты быстро разбираешь новую область до структуры и начинаешь <strong>строить, а не просто выполнять</strong>.</p><p>Наиболее органичные направления для свитча: системная аналитика, product management с техническим фокусом, архитектура данных, DevOps. Ты будешь расти быстрее коллег, потому что видишь целое, а не только свою часть задачи.</p><p>Главный риск при смене: <strong>перфекционизм как тормоз</strong>. Ты будешь ждать идеального момента — его нет. Запускай достаточно хорошее решение и итерируй.</p>`,
+    income: ['180', '220', '280', '340', '380', '450', '520', '620', '700'],
+    metrics: { now: '₽180к', y5: '₽380к', y10: '₽700к', balance: '87%', risk: 'Низкий', riskClass: 'green' },
+    powers: ['🔬 Системное мышление', '📐 Структурный анализ', '🎯 Точность решений', '🔗 Архитектура связей'],
+    risks: [
+      { name: 'Технологическое устаревание', pct: 15, level: 'low' },
+      { name: 'Перфекционизм и прокрастинация', pct: 40, level: 'med' },
+      { name: 'Замещение ИИ-инструментами', pct: 20, level: 'low' },
+      { name: 'Медленный карьерный старт', pct: 30, level: 'med' },
+    ]
+  },
+  {
+    score: 1, emoji: '⚙️', name: 'Инженер процессов',
+    tagline: 'Находишь красоту в оптимизации и точности',
+    forecast: `<p>Ты превращаешь хаос в порядок — это редкий навык, который резко дорожает при масштабировании любого бизнеса. При смене карьеры ты можешь <strong>зайти в любую область через операционную роль</strong> и за 1–2 года стать незаменимым.</p><p>Лучшие направления для свитча: operations manager, product owner, бизнес-аналитик, консультант по внедрению процессов. Компании с 50–500 сотрудников — идеальная среда: там твоя работа видна и ценится.</p><p>Ключевой навык для развития: <strong>освоение ИИ-инструментов автоматизации</strong>. Те, кто научится проектировать процессы с AI-компонентами, выйдут на принципиально другой уровень ценности уже к 2027 году.</p>`,
+    income: ['160', '195', '240', '280', '320', '380', '440', '510', '580'],
+    metrics: { now: '₽160к', y5: '₽320к', y10: '₽580к', balance: '82%', risk: 'Низкий', riskClass: 'green' },
+    powers: ['⚙️ Оптимизация процессов', '📊 Работа с метриками', '🛠️ Системная инженерия', '🔍 Поиск узких мест'],
+    risks: [
+      { name: 'Автоматизация рутинных задач', pct: 40, level: 'med' },
+      { name: 'Ограниченная видимость в команде', pct: 25, level: 'low' },
+      { name: 'Быстрое устаревание инструментов', pct: 30, level: 'med' },
+      { name: 'Выгорание от монотонности', pct: 35, level: 'med' },
+    ]
+  },
+  {
+    score: 2, emoji: '🔬', name: 'Аналитик данных',
+    tagline: 'Видишь скрытые паттерны там, где другие видят шум',
+    forecast: `<p>Данные — новая нефть, и ты знаешь, как её перерабатывать. Спрос на аналитиков данных вырастет в 4–6 раз к 2030 — ты меняешь карьеру в самое подходящее время. <strong>Даже без опыта первый джун-оффер реально получить за 4–6 месяцев</strong> при системной подготовке.</p><p>Оптимальный путь свитча: SQL + Python + один BI-инструмент (Tableau или Power BI) → первый проект в портфолио → джун. Твоя аналитическая база из прошлой карьеры — это уже преимущество перед вчерашними студентами.</p><p>Ключевая развилка через 2–3 года: углубиться в ML-инженерию или вырасти в <strong>стратегического аналитика уровня VP</strong>. Оба пути ведут к высокому доходу.</p>`,
+    income: ['170', '210', '255', '300', '350', '410', '475', '545', '620'],
+    metrics: { now: '₽170к', y5: '₽350к', y10: '₽620к', balance: '79%', risk: 'Низкий', riskClass: 'green' },
+    powers: ['📈 Работа с данными', '🧩 Паттерн-recognition', '💡 Инсайты из цифр', '🎯 Data-driven решения'],
+    risks: [
+      { name: 'Замещение Auto-ML инструментами', pct: 45, level: 'med' },
+      { name: 'Быстрое устаревание навыков', pct: 35, level: 'med' },
+      { name: 'Высокий порог входа', pct: 30, level: 'med' },
+      { name: 'Выгорание от монотонности', pct: 28, level: 'low' },
+    ]
+  },
+  {
+    score: 3, emoji: '🌊', name: 'Гибкий стратег',
+    tagline: 'Соединяешь системное мышление с творческой интуицией',
+    forecast: `<p>Ты — редкий гибрид: способен переключаться между режимами аналитика и визионера. При смене карьеры это делает тебя универсальным игроком — ты легко адаптируешься к любой роли и быстро понимаешь что нужно команде.</p><p>Лучшие направления: <strong>product management, стратегический консалтинг, growth marketing</strong>. Ты умеешь видеть и большую картину, и детали — это редкость, которую хорошо оплачивают на уровне middle+.</p><p>Главный вызов: научиться быстро принимать решения при неполных данных. Гибкость иногда превращается в нерешительность — это твоя зона роста на первые 2 года в новой сфере.</p>`,
+    income: ['200', '245', '300', '355', '420', '510', '600', '700', '800'],
+    metrics: { now: '₽200к', y5: '₽420к', y10: '₽800к', balance: '84%', risk: 'Средний', riskClass: 'yellow' },
+    powers: ['🌊 Адаптивность', '🧭 Стратегическое видение', '🤝 Эмпатия в решениях', '⚖️ Баланс данных и чутья'],
+    risks: [
+      { name: 'Нерешительность при выборе', pct: 50, level: 'med' },
+      { name: 'Размытый личный бренд', pct: 40, level: 'med' },
+      { name: 'Потеря глубины ради ширины', pct: 35, level: 'med' },
+      { name: 'Рыночная волатильность', pct: 30, level: 'med' },
+    ]
+  },
+  {
+    score: 4, emoji: '✨', name: 'Творческий дизайнер',
+    tagline: 'Превращаешь сложное в красивое и понятное',
+    forecast: `<p>В эпоху, когда ИИ генерирует бесконечный поток шаблонного контента, <strong>настоящий творческий голос с человеческим смыслом становится дороже</strong>. Ты меняешь карьеру в момент, когда рынок начинает это понимать.</p><p>При смене карьеры фокус на: UX/UI дизайн, контент-стратегия, бренд-дизайн, creative direction. Ключевой актив — не инструменты (Figma, Photoshop), а <strong>умение решать задачи через визуальный язык</strong>. Это приходит с опытом, которого у тебя уже достаточно.</p><p>Освой ИИ-инструменты как усилитель, а не замену — Midjourney, Runway, Adobe Firefly. Те, кто работает с AI как соавтором, производят в 5x больше и стоят иначе.</p>`,
+    income: ['140', '170', '210', '255', '300', '370', '440', '520', '600'],
+    metrics: { now: '₽140к', y5: '₽300к', y10: '₽600к', balance: '76%', risk: 'Средний', riskClass: 'yellow' },
+    powers: ['✨ Визуальное мышление', '🎨 Уникальный стиль', '💭 Нарратив через дизайн', '🌈 Эстетическое видение'],
+    risks: [
+      { name: 'Конкуренция ИИ-генерации', pct: 55, level: 'high' },
+      { name: 'Нестабильность дохода на старте', pct: 45, level: 'med' },
+      { name: 'Творческое выгорание', pct: 40, level: 'med' },
+      { name: 'Сложность масштабирования', pct: 35, level: 'med' },
+    ]
+  },
+  {
+    score: 5, emoji: '⚡', name: 'Инноватор',
+    tagline: 'Ломаешь шаблоны и создаёшь новые правила игры',
+    forecast: `<p>Ты — катализатор изменений. При смене карьеры твоя стратегия не "найти стабильную работу", а <strong>найти точку приложения силы</strong> — место, где твоя энергия создаёт максимальный эффект.</p><p>Лучшие направления: стартап-экосистема, venture building, growth hacking, продуктовые роли в быстрорастущих компаниях. Ищи не должность, а задачу — "нам нужно вырасти в 10x за год" — это твоё.</p><p>Главная ловушка при смене карьеры: <strong>начать слишком много и не довести до результата</strong>. Выбери один вектор и пройди его до первого ощутимого успеха — это откроет все остальные двери.</p>`,
+    income: ['160', '180', '220', '300', '400', '520', '650', '780', '900'],
+    metrics: { now: '₽160к', y5: '₽400к', y10: '₽900к', balance: '68%', risk: 'Высокий', riskClass: 'red' },
+    powers: ['⚡ Разрушительные инновации', '🚀 Скорость запуска', '🔮 Опережение трендов', '🌍 Системные изменения'],
+    risks: [
+      { name: 'Синдром незавершённости', pct: 65, level: 'high' },
+      { name: 'Финансовая нестабильность', pct: 55, level: 'high' },
+      { name: 'Перегрев и выгорание', pct: 50, level: 'med' },
+      { name: 'Потеря фокуса', pct: 60, level: 'high' },
+    ]
+  },
+  {
+    score: 6, emoji: '🌀', name: 'Визионер',
+    tagline: 'Видишь будущее раньше, чем оно случается',
+    forecast: `<p>Ты живёшь на несколько шагов впереди. При смене карьеры это одновременно сила и вызов: тебе нужно не просто найти новую работу, а <strong>найти среду, где твоё видение будет цениться, а не пугать</strong>.</p><p>Лучшие направления: thought leadership, product strategy, основание собственного проекта, консалтинг на уровне стратегии. Корпоративные роли будут тесны — ищи стартапы серии A–B, где нужен человек с big picture.</p><p>Практический совет: <strong>начни публично делиться идеями</strong> — пиши, выступай, создавай контент в новой сфере. Визионеры с аудиторией получают лучшие оферы без резюме.</p>`,
+    income: ['150', '165', '200', '270', '350', '480', '600', '730', '850'],
+    metrics: { now: '₽150к', y5: '₽350к', y10: '₽850к', balance: '65%', risk: 'Высокий', riskClass: 'red' },
+    powers: ['🌀 Футуристическое видение', '🧠 Концептуальное мышление', '✍️ Сила нарратива', '💫 Вдохновение других'],
+    risks: [
+      { name: 'Отрыв от реальности', pct: 60, level: 'high' },
+      { name: 'Нерегулярность дохода', pct: 55, level: 'high' },
+      { name: 'Трудность реализации идей', pct: 50, level: 'med' },
+      { name: 'Одиночество на пике', pct: 45, level: 'med' },
+    ]
+  },
+  {
+    score: 7, emoji: '🔥', name: 'Пионер хаоса',
+    tagline: 'Неопределённость — твоя стихия и главная суперсила',
+    forecast: `<p>Ты питаешься от хаоса — и смена карьеры для тебя не стресс, а <strong>топливо</strong>. Пока другие боятся неизвестности, ты в ней процветаешь. Это делает тебя одним из самых ценных типов в эпоху постоянных изменений.</p><p>Лучшие направления: серийное предпринимательство, кризисный менеджмент, ранние стартапы (0→1), венчурные роли. Тебе не нужна дорожная карта — тебе нужна задача с высокой неопределённостью и высокими ставками.</p><p>Самый важный инсайт: <strong>найди операционного партнёра</strong> — человека, который любит делать то, что ты не любишь (системы, процессы, предсказуемость). Вместе вы непобедимы.</p>`,
+    income: ['130', '140', '180', '290', '450', '620', '800', '1000', '1200'],
+    metrics: { now: '₽130к', y5: '₽450к', y10: '₽1.2M', balance: '55%', risk: 'Экстремальный', riskClass: 'red' },
+    powers: ['🔥 Действие в неопределённости', '⚡ Экстремальная скорость', '🎲 Интуиция в риске', '🌪️ Адаптация под давлением'],
+    risks: [
+      { name: 'Финансовая нестабильность', pct: 70, level: 'high' },
+      { name: 'Отсутствие систематичности', pct: 65, level: 'high' },
+      { name: 'Проблемы с командой', pct: 55, level: 'high' },
+      { name: 'Катастрофический провал', pct: 60, level: 'high' },
+    ]
+  },
+];
+
+// ── LOAD DATA ──
+const score = parseInt(localStorage.getItem('futureSim_score') ?? '-1');
+const profile = JSON.parse(localStorage.getItem('futureSim_profile') || '{}');
+const isPaid = localStorage.getItem('futureSim_paid') === 'true';
+
+if (score === -1) {
+  document.getElementById('mainContent').innerHTML = `
+    <div style="text-align:center;padding:60px 20px">
+      <div style="font-size:3rem;margin-bottom:16px">🔍</div>
+      <h2 style="font-family:var(--font-display);font-size:1.8rem;margin-bottom:12px">Нет данных теста</h2>
+      <p style="color:var(--text-muted);margin-bottom:28px">Похоже, ты ещё не прошёл тест</p>
+      <a href="audience.html" class="btn">Начать симуляцию →</a>
+    </div>`;
+} else {
+  const type = TYPES[Math.min(score, 7)];
+  initHero(type);
+  renderContent(type);
+}
+
+function initHero(type) {
+  document.getElementById('heroAvatar').textContent = type.emoji;
+  document.getElementById('heroType').textContent = type.name;
+  document.getElementById('heroTagline').textContent = type.tagline;
+
+  // Score dots
+  const dotsWrap = document.getElementById('scoreDots');
+  for (let i = 0; i < 7; i++) {
+    const d = document.createElement('div');
+    d.className = 'sc-dot ' + (i < score ? 'b' : 'a');
+    dotsWrap.appendChild(d);
+  }
+  document.getElementById('scoreLabel').textContent = score + ' из 7 — ' + (score <= 2 ? 'системный' : score <= 4 ? 'гибридный' : 'творческий');
+}
+
+function renderContent(type) {
+  const name = profile.name ? profile.name : '';
+  const years = ['2025','2026','2027','2028','2029','2030','2031','2032','2033','2034'];
+
+  document.getElementById('mainContent').innerHTML = `
+
+    <!-- 1. Прогноз -->
+    <div class="card" style="animation-delay:0.05s">
+      <div class="card-head"><span class="card-icon">🤖</span><span class="card-title">ИИ-прогноз карьерного свитча</span></div>
+      <div class="forecast-text">${type.forecast}</div>
+    </div>
+
+    <!-- 2. Метрики -->
+    <div class="card" style="animation-delay:0.1s">
+      <div class="card-head"><span class="card-icon">📊</span><span class="card-title">Карьерные метрики</span></div>
+      <div class="metrics-grid">
+        <div class="metric"><div class="metric-val green">${type.metrics.now}</div><div class="metric-label">Старт (медиана)</div></div>
+        <div class="metric"><div class="metric-val green">${type.metrics.y5}</div><div class="metric-label">Через 5 лет</div></div>
+        <div class="metric"><div class="metric-val green">${type.metrics.y10}</div><div class="metric-label">Через 10 лет</div></div>
+        <div class="metric"><div class="metric-val ${parseInt(type.metrics.balance)>75?'green':'yellow'}">${type.metrics.balance}</div><div class="metric-label">Баланс жизни</div></div>
+        <div class="metric"><div class="metric-val ${type.metrics.riskClass}">${type.metrics.risk}</div><div class="metric-label">Уровень риска</div></div>
+        <div class="metric"><div class="metric-val green">${score}/7</div><div class="metric-label">Индекс креатива</div></div>
+      </div>
+    </div>
+
+    <!-- 3. Суперсилы -->
+    <div class="card" style="animation-delay:0.15s">
+      <div class="card-head"><span class="card-icon">⚡</span><span class="card-title">Твои суперсилы</span></div>
+      <div class="powers-wrap">
+        ${type.powers.map(p => `<span class="power-tag">${p}</span>`).join('')}
+      </div>
+    </div>
+
+    <!-- 4. Сценарии — ВЫБОР ПУТИ -->
+    <div class="card" style="animation-delay:0.2s">
+      <div class="card-head"><span class="card-icon">🔭</span><span class="card-title">Выбери свой жизненный сценарий</span></div>
+      <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:20px;line-height:1.6">
+        Оба пути реальны для твоего психотипа. Выбери тот, который резонирует — и мы построим персональную карту развития.
+      </p>
+      <div class="scenarios-grid">
+
+        <!-- Стартап -->
+        <div class="scenario-card startup" id="scStartup" onclick="selectScenario('startup')">
+          <span class="sc-emoji">🚀</span>
+          <div class="sc-type">Сценарий А</div>
+          <div class="sc-name">Свой путь — стартап</div>
+          <div class="sc-desc">Фриланс, собственный проект или ранний стартап. Быстрое обучение, свобода решений, высокий потолок дохода.</div>
+          <div class="sc-stats">
+            <div class="sc-stat">
+              <span class="sc-stat-label">Доход</span>
+              <div class="sc-stat-bar"><div class="sc-stat-fill" style="width:85%"></div></div>
+              <span class="sc-stat-val">★★★★★</span>
+            </div>
+            <div class="sc-stat">
+              <span class="sc-stat-label">Стабильность</span>
+              <div class="sc-stat-bar"><div class="sc-stat-fill" style="width:35%"></div></div>
+              <span class="sc-stat-val">★★☆☆☆</span>
+            </div>
+            <div class="sc-stat">
+              <span class="sc-stat-label">Баланс</span>
+              <div class="sc-stat-bar"><div class="sc-stat-fill" style="width:55%"></div></div>
+              <span class="sc-stat-val">★★★☆☆</span>
+            </div>
+            <div class="sc-stat">
+              <span class="sc-stat-label">Скорость роста</span>
+              <div class="sc-stat-bar"><div class="sc-stat-fill" style="width:90%"></div></div>
+              <span class="sc-stat-val">★★★★★</span>
+            </div>
+          </div>
+          <div class="sc-cta">
+            <span class="sc-cta-text">Выбрать этот путь</span>
+            <span class="sc-arrow">→</span>
+          </div>
+        </div>
+
+        <!-- Корпорация -->
+        <div class="scenario-card corp" id="scCorp" onclick="selectScenario('corp')">
+          <span class="sc-emoji">🏢</span>
+          <div class="sc-type">Сценарий Б</div>
+          <div class="sc-name">Корпоративный трек</div>
+          <div class="sc-desc">Стабильная компания, менторство, чёткий карьерный путь. Медленнее, но предсказуемее и с меньшим стрессом.</div>
+          <div class="sc-stats">
+            <div class="sc-stat">
+              <span class="sc-stat-label">Доход</span>
+              <div class="sc-stat-bar"><div class="sc-stat-fill" style="width:60%"></div></div>
+              <span class="sc-stat-val">★★★☆☆</span>
+            </div>
+            <div class="sc-stat">
+              <span class="sc-stat-label">Стабильность</span>
+              <div class="sc-stat-bar"><div class="sc-stat-fill" style="width:85%"></div></div>
+              <span class="sc-stat-val">★★★★★</span>
+            </div>
+            <div class="sc-stat">
+              <span class="sc-stat-label">Баланс</span>
+              <div class="sc-stat-bar"><div class="sc-stat-fill" style="width:75%"></div></div>
+              <span class="sc-stat-val">★★★★☆</span>
+            </div>
+            <div class="sc-stat">
+              <span class="sc-stat-label">Скорость роста</span>
+              <div class="sc-stat-bar"><div class="sc-stat-fill" style="width:50%"></div></div>
+              <span class="sc-stat-val">★★★☆☆</span>
+            </div>
+          </div>
+          <div class="sc-cta">
+            <span class="sc-cta-text">Выбрать этот путь</span>
+            <span class="sc-arrow">→</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="scenarios-hint" id="scenariosHint">
+        👆 Выбери сценарий — и мы откроем персональную карту развития
+      </div>
+    </div>
+
+    <!-- 5. BLUR: График дохода -->
+    <div class="blur-wrap">
+      <div class="card" style="animation-delay:0.25s">
+        <div class="card-head"><span class="card-icon">📈</span><span class="card-title">Прогноз дохода 2025–2034</span></div>
+        <div class="chart-wrap"><canvas id="incomeChart"></canvas></div>
+      </div>
+      ${!isPaid ? `
+      <div class="blur-overlay">
+        <div class="blur-icon">📈</div>
+        <div class="blur-title">График дохода по годам</div>
+        <div class="blur-desc">Точный прогноз по двум сценариям — как будет расти доход при каждом выборе пути</div>
+        <div class="blur-price">🔓 Открыть за 299 ₽</div>
+        <button class="btn" onclick="openPaywall()">Разблокировать →</button>
+      </div>` : ''}
+    </div>
+
+    <!-- 6. BLUR: Факторы риска -->
+    <div class="blur-wrap">
+      <div class="card" style="animation-delay:0.3s">
+        <div class="card-head"><span class="card-icon">⚠️</span><span class="card-title">Факторы риска</span></div>
+        <div class="risk-list" id="riskList">
+          ${type.risks.map(r => `
+            <div class="risk-item">
+              <div class="risk-head">
+                <span class="risk-name">${r.name}</span>
+                <span class="risk-pct" style="color:${r.level==='high'?'#ff6060':r.level==='med'?'#ffb840':'var(--accent)'}">${r.pct}%</span>
+              </div>
+              <div class="risk-track">
+                <div class="risk-fill ${r.level}" data-pct="${r.pct}"></div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>
+      ${!isPaid ? `
+      <div class="blur-overlay">
+        <div class="blur-icon">⚠️</div>
+        <div class="blur-title">Факторы риска</div>
+        <div class="blur-desc">Какие конкретно риски ждут именно тебя — и как их минимизировать при смене профессии</div>
+        <div class="blur-price">🔓 Открыть за 299 ₽</div>
+        <button class="btn" onclick="openPaywall()">Разблокировать →</button>
+      </div>` : ''}
+    </div>
+
+    <!-- 7. Финальный CTA -->
+    <div class="final-cta" style="animation-delay:0.35s">
+      <h3>${name ? `${name}, твой` : 'Твой'} следующий шаг — <em>действовать</em></h3>
+      <p>Психотип определён. Теперь выбери сценарий выше — и мы построим персональную карту развития с конкретными шагами на ближайший год.</p>
+      <div class="cta-btns">
+        <button class="btn btn-large" onclick="openPaywall()">🔓 Открыть полный прогноз · 299 ₽</button>
+        <a href="test.html" class="btn btn-ghost btn-large">Пройти тест снова</a>
+      </div>
+      <div class="share-row">
+        <button class="share-btn" onclick="shareResult()">🔗 Поделиться результатом</button>
+        <button class="share-btn" onclick="copyResult()">📋 Скопировать ссылку</button>
+      </div>
+    </div>
+
+  `;
+
+  // Init chart and risk bars after render
+  setTimeout(() => {
+    initChart(type, years);
+    animateRisks();
+  }, 300);
+}
+
+// ── SCENARIO SELECTION ──
+function selectScenario(sc) {
+  const scStartup = document.getElementById('scStartup');
+  const scCorp = document.getElementById('scCorp');
+  const hint = document.getElementById('scenariosHint');
+
+  scStartup.classList.remove('selected-startup', 'selected-corp');
+  scCorp.classList.remove('selected-startup', 'selected-corp');
+
+  if (sc === 'startup') {
+    scStartup.classList.add('selected-startup');
+    hint.innerHTML = '🚀 Отличный выбор! <strong style="color:var(--text)">Выбери полный прогноз</strong> — и получишь персональную карту развития для стартап-пути';
+  } else {
+    scCorp.classList.add('selected-corp');
+    hint.innerHTML = '🏢 Надёжный выбор! <strong style="color:var(--text)">Выбери полный прогноз</strong> — и получишь пошаговый план для корпоративного трека';
+  }
+
+  localStorage.setItem('futureSim_scenario', sc);
+
+  // After short delay prompt paywall
+  setTimeout(() => { openPaywall(); }, 800);
+}
+
+// ── CHART ──
+function initChart(type, years) {
+  const ctx = document.getElementById('incomeChart');
+  if (!ctx) return;
+  const base = type.income.map(Number);
+  const optimistic = base.map((v, i) => Math.round(v * (1 + i * 0.035)));
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: years,
+      datasets: [
+        { label: 'Стартап-сценарий', data: optimistic, borderColor: 'rgba(255,140,60,0.9)', backgroundColor: 'rgba(255,140,60,0.06)', fill: true, tension: 0.4, pointBackgroundColor: 'rgba(255,140,60,0.9)', pointRadius: 3, borderWidth: 2 },
+        { label: 'Корп. сценарий', data: base, borderColor: 'rgba(100,160,255,0.8)', backgroundColor: 'rgba(100,160,255,0.04)', fill: true, tension: 0.4, pointBackgroundColor: 'rgba(100,160,255,0.8)', pointRadius: 3, borderWidth: 1.5, borderDash: [4,4] },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: true, labels: { color: 'rgba(255,255,255,0.45)', font: { family: "'Space Grotesk', sans-serif", size: 12 }, boxWidth: 16, boxHeight: 2 } },
+        tooltip: { backgroundColor: '#1a1a1a', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, titleColor: '#fff', bodyColor: 'rgba(255,255,255,0.7)', padding: 12, callbacks: { label: c => ` ${c.dataset.label}: ₽${c.parsed.y.toLocaleString('ru-RU')}к` } }
+      },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: 'rgba(255,255,255,0.35)', font: { family: "'Space Grotesk', sans-serif", size: 11 } } },
+        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: 'rgba(255,255,255,0.35)', font: { family: "'Space Grotesk', sans-serif", size: 11 }, callback: v => `₽${v}к` } }
+      }
+    }
+  });
+}
+
+function animateRisks() {
+  document.querySelectorAll('.risk-fill').forEach(bar => {
+    setTimeout(() => { bar.style.width = bar.dataset.pct + '%'; }, 100);
+  });
+}
+
+// ── PAYWALL ──
+function openPaywall() { document.getElementById('paywallModal').classList.add('open'); }
+function closePaywall() { document.getElementById('paywallModal').classList.remove('open'); }
+
+// Симуляция покупки (пока без реальной оплаты)
+function simulatePurchase() {
+  localStorage.setItem('futureSim_paid', 'true');
+  closePaywall();
+  // Remove blur overlays
+  document.querySelectorAll('.blur-overlay').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transition = 'opacity 0.4s';
+    setTimeout(() => el.remove(), 400);
+  });
+  animateRisks();
+}
+
+// Close modal on backdrop click
+document.getElementById('paywallModal').addEventListener('click', function(e) {
+  if (e.target === this) closePaywall();
+});
+
+// ── SHARE ──
+function shareResult() {
+  const type = TYPES[Math.min(score, 7)];
+  const text = `Мой психотип по FutureSim: ${type.emoji} ${type.name}\n"${type.tagline}"\nУзнай свой: ${window.location.origin}/index.html`;
+  if (navigator.share) {
+    navigator.share({ title: `FutureSim: ${type.name}`, text });
+  } else {
+    copyResult();
+  }
+}
+
+function copyResult() {
+  const type = TYPES[Math.min(score, 7)];
+  const url = window.location.href;
+  navigator.clipboard?.writeText(url).then(() => {
+    const btn = document.querySelector('.share-btn');
+    const orig = btn.textContent;
+    btn.textContent = '✓ Ссылка скопирована!';
+    setTimeout(() => { btn.textContent = orig; }, 2000);
+  });
+}
+</script>
+</body>
+</html>
