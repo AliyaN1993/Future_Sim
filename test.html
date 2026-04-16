@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тест — FutureSim</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Yandex Metrika -->
+  <script type="text/javascript">
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+    m[i].l=1*new Date();
+    for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}
+    k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");
+    ym(107245981,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true});
+  </script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/107245981" style="position:absolute;left:-9999px;" alt=""/></div></noscript>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BMXPMT81Y5"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-BMXPMT81Y5');
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0a;
+      --accent: #ccff00;
+      --accent-glow: rgba(204,255,0,0.5);
+      --accent-dim: rgba(204,255,0,0.12);
+      --card-bg: #111111;
+      --border: rgba(255,255,255,0.08);
+      --text: #ffffff;
+      --text-muted: rgba(255,255,255,0.48);
+      --text-dim: rgba(255,255,255,0.22);
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'Space Grotesk', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── HEADER ── */
+    header {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 0 40px;
+      height: 72px;
+      border-bottom: 1px solid var(--border);
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(16px);
+    }
+    .logo { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; color: var(--text); text-decoration: none; letter-spacing: -0.02em; flex-shrink: 0; }
+    .logo span { color: var(--accent); text-shadow: 0 0 15px var(--accent-glow); }
+
+    .header-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .header-timer {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .timer-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent-glow);
+      animation: blink 1.5s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    /* ── PROGRESS ── */
+    .progress-bar { position: fixed; top: 72px; left: 0; right: 0; height: 2px; background: var(--border); z-index: 99; }
+    .progress-fill { height: 100%; background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+
+    .step-indicator { position: fixed; top: 82px; right: 40px; display: flex; gap: 6px; align-items: center; z-index: 99; }
+    .si-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: all 0.3s; }
+    .si-dot.done { background: rgba(204,255,0,0.35); }
+    .si-dot.active { background: var(--accent); box-shadow: 0 0 6px var(--accent-glow); width: 18px; border-radius: 3px; }
+
+    /* ── MAIN ── */
+    main {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 100px 24px 60px;
+    }
+
+    /* ── QUESTION COUNTER ── */
+    .q-header {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .q-counter-text {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .q-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .q-dot {
+      width: 32px; height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      transition: all 0.4s ease;
+    }
+    .q-dot.done { background: rgba(204,255,0,0.4); }
+    .q-dot.active {
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    /* ── QUESTION CARD ── */
+    .q-card {
+      width: 100%;
+      max-width: 680px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px 40px 32px;
+      position: relative;
+      overflow: hidden;
+      animation: slideIn 0.45s cubic-bezier(0.34,1.2,0.64,1) both;
+    }
+    .q-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent 60%);
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(40px) scale(0.97); }
+      to   { opacity: 1; transform: translateX(0) scale(1); }
+    }
+    @keyframes slideOut {
+      from { opacity: 1; transform: translateX(0) scale(1); }
+      to   { opacity: 0; transform: translateX(-40px) scale(0.97); }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-40px) scale(0.97); }
+      to   { opacity: 1; transform: translateX(0) scale(1); }
+    }
+
+    /* Q tag */
+    .q-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(204,255,0,0.2);
+      color: var(--accent);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+    }
+
+    /* Q number big */
+    .q-num-big {
+      position: absolute;
+      top: 28px; right: 36px;
+      font-family: var(--font-display);
+      font-size: 4rem;
+      font-weight: 800;
+      color: rgba(204,255,0,0.06);
+      letter-spacing: -0.04em;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    /* Q text */
+    .q-text {
+      font-family: var(--font-display);
+      font-size: clamp(1.3rem, 3vw, 1.75rem);
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.025em;
+      margin-bottom: 32px;
+      padding-right: 60px;
+    }
+
+    /* ── OPTIONS ── */
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+      position: relative;
+      overflow: hidden;
+      text-align: left;
+      width: 100%;
+      font-family: var(--font-body);
+    }
+    .option::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .option:hover {
+      border-color: rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.05);
+      transform: translateY(-1px);
+    }
+
+    /* Option A — системный (синий) */
+    .option.sel-a {
+      border-color: rgba(80,160,255,0.5);
+      background: rgba(80,160,255,0.07);
+    }
+    .option.sel-a .opt-letter { background: rgba(80,160,255,0.2); color: rgb(120,180,255); }
+    .option.sel-a .opt-label { color: rgba(120,180,255,0.8); }
+    .option.sel-a .opt-text { color: var(--text); }
+    .option.sel-a .opt-check { border-color: rgba(80,160,255,0.6); background: rgba(80,160,255,0.15); color: rgb(120,180,255); }
+
+    /* Option B — креативный (лайм) */
+    .option.sel-b {
+      border-color: rgba(204,255,0,0.45);
+      background: var(--accent-dim);
+    }
+    .option.sel-b .opt-letter { background: rgba(204,255,0,0.2); color: var(--accent); }
+    .option.sel-b .opt-label { color: rgba(204,255,0,0.7); }
+    .option.sel-b .opt-text { color: var(--text); }
+    .option.sel-b .opt-check { border-color: var(--accent); background: rgba(204,255,0,0.15); color: var(--accent); }
+
+    .opt-letter {
+      width: 34px; height: 34px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .opt-body { flex: 1; }
+    .opt-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+      transition: color 0.2s;
+    }
+    .opt-text {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+
+    .opt-check {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      flex-shrink: 0;
+      margin-top: 6px;
+      transition: all 0.2s;
+      color: transparent;
+    }
+
+    /* ── ANSWER HINT ── */
+    .answer-hint {
+      font-size: 0.78rem;
+      color: rgba(255,100,100,0.7);
+      text-align: center;
+      min-height: 20px;
+      margin-top: 12px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .answer-hint.show { opacity: 1; }
+
+    /* ── NAV ── */
+    .q-nav {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      align-items: center;
+    }
+
+    .btn-prev {
+      width: 52px; height: 52px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .btn-prev:hover:not(:disabled) { border-color: rgba(255,255,255,0.2); color: var(--text); }
+    .btn-prev:disabled { opacity: 0.25; cursor: not-allowed; }
+
+    .btn-next {
+      flex: 1;
+      height: 52px;
+      background: var(--accent);
+      color: #0a0a0a;
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 0.975rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s;
+      letter-spacing: 0.01em;
+    }
+    .btn-next:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(204,255,0,0.4); }
+    .btn-next:active { transform: translateY(0); }
+
+    /* ── PROFILE BADGE ── */
+    .profile-badge {
+      width: 100%;
+      max-width: 680px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .pb-avatar {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(204,255,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .pb-text { font-size: 0.85rem; color: var(--text-muted); }
+    .pb-text strong { color: var(--text); }
+    .pb-progress {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+    .pb-mini-dots { display: flex; gap: 4px; }
+    .pb-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: background 0.3s; }
+    .pb-dot.done { background: rgba(204,255,0,0.5); }
+    .pb-dot.active { background: var(--accent); }
+
+    /* ── THINKING TYPES LEGEND ── */
+    .thinking-legend {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .tl-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+    .tl-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .tl-dot.sys { background: rgb(100,160,255); }
+    .tl-dot.cre { background: var(--accent); }
+    .tl-text { font-size: 0.75rem; color: var(--text-muted); }
+    .tl-text strong { color: var(--text); display: block; font-weight: 600; font-size: 0.78rem; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 600px) {
+      header { padding: 0 20px; }
+      .step-indicator { right: 20px; }
+      main { padding: 92px 16px 48px; }
+      .q-card { padding: 28px 20px 24px; }
+      .q-text { font-size: 1.2rem; padding-right: 40px; }
+      .q-num-big { font-size: 3rem; top: 20px; right: 20px; }
+      .thinking-legend { display: none; }
+      .pb-progress { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <a href="index.html" class="logo">Future<span>Sim</span></a>
+  <div class="header-right">
+    <div class="header-timer">
+      <span class="timer-dot"></span>
+      <span id="timerDisplay">3:00</span>
+    </div>
+  </div>
+</header>
+
+<div class="progress-bar">
+  <div class="progress-fill" id="progressFill" style="width:42%"></div>
+</div>
+
+<div class="step-indicator">
+  <div class="si-dot done"></div>
+  <div class="si-dot done"></div>
+  <div class="si-dot active"></div>
+  <div class="si-dot"></div>
+  <div class="si-dot"></div>
+</div>
+
+<!-- ── MAIN ── -->
+<main>
+
+  <!-- Profile badge -->
+  <div class="profile-badge" id="profileBadge" style="display:none">
+    <div class="pb-avatar" id="pbAvatar">🧑</div>
+    <div class="pb-text">Привет, <strong id="pbName"></strong>! Отвечай честно — нет правильных ответов.</div>
+    <div class="pb-progress">
+      <div class="pb-mini-dots" id="pbDots"></div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="thinking-legend">
+    <div class="tl-item">
+      <div class="tl-dot sys"></div>
+      <div class="tl-text"><strong>Вариант A</strong>Системный подход</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot cre"></div>
+      <div class="tl-text"><strong>Вариант B</strong>Творческий подход</div>
+    </div>
+  </div>
+
+  <!-- Q header -->
+  <div class="q-header">
+    <div class="q-counter-text">Вопрос <span id="qNum">1</span> из 7</div>
+    <div class="q-dots" id="qDots"></div>
+  </div>
+
+  <!-- Question card -->
+  <div id="qCardWrap" style="width:100%;max-width:680px;"></div>
+
+  <!-- Hint -->
+  <p class="answer-hint" id="answerHint">👆 Выбери один из вариантов, чтобы продолжить</p>
+
+  <!-- Nav -->
+  <div class="q-nav">
+    <button class="btn-prev" id="btnPrev" onclick="prevQ()" disabled>←</button>
+    <button class="btn-next" id="btnNext" onclick="nextQ()">Следующий вопрос →</button>
+  </div>
+
+</main>
+
+<script>
+// ── ВОПРОСЫ (адаптированы под свитчеров 25–35) ──
+const QUESTIONS = [
+  {
+    tag: '🧭 Планирование',
+    text: 'Ты решил сменить профессию. С чего начинаешь?',
+    a: { label: 'Системный подход', text: 'Составляю подробный план: изучаю рынок, строю roadmap на год, выбираю курсы и расставляю дедлайны. Без структуры двигаться некомфортно.' },
+    b: { label: 'Творческий подход', text: 'Начинаю пробовать разное — иду на митапы, делаю первые проекты, общаюсь с людьми из новой сферы. Понимание приходит в процессе.' },
+  },
+  {
+    tag: '💥 Ошибки и провалы',
+    text: 'На новом направлении ты облажался — проект не зашёл, клиент отказал. Твоя реакция?',
+    a: { label: 'Анализ и система', text: 'Разбираю по шагам: где именно дал сбой, что не учёл, как не повторить. Провал — это данные для следующей попытки.' },
+    b: { label: 'Опыт и движение', text: 'Принимаю как часть пути, делаю вывод и иду дальше. Главное — не застрять в самокопании и сохранить энергию для следующего шага.' },
+  },
+  {
+    tag: '🌪️ Неопределённость',
+    text: 'Ты уходишь в новую сферу без гарантий дохода на первые 6 месяцев. Как себя ощущаешь?',
+    a: { label: 'Нужна стабильность', text: 'Тревога — это нормально. Сначала создам финансовую подушку и чёткий план выхода на доход, потом буду рисковать. Безопасность важна.' },
+    b: { label: 'Азарт от неизвестности', text: 'Чувствую драйв. Ограниченность ресурсов заставляет двигаться быстрее и искать нестандартные решения. Неопределённость — это свобода.' },
+  },
+  {
+    tag: '🔥 Мотивация',
+    text: 'Что будет главным топливом в новой профессии?',
+    a: { label: 'Результат и рост', text: 'Измеримый прогресс: метрики, рост дохода, понятные критерии успеха. Мне важно видеть конкретный результат своей работы.' },
+    b: { label: 'Смысл и влияние', text: 'Ощущение, что делаю что-то важное и создаю что-то своё. Деньги придут, если работа настоящая и я в неё верю.' },
+  },
+  {
+    tag: '👥 Команда',
+    text: 'Ты джун в новой сфере. Коллеги не согласны с твоим подходом к задаче. Что делаешь?',
+    a: { label: 'Данные решают', text: 'Собираю аргументы, ищу примеры и цифры. Если моя позиция верна — докажу это фактами. Уважаю опыт команды, но принимаю только логичные доводы.' },
+    b: { label: 'Ищу компромисс', text: 'Слушаю всех, нахожу в каждой позиции ценное и предлагаю решение, которое объединяет. Важно, чтобы команда двигалась вместе.' },
+  },
+  {
+    tag: '⚖️ Риск и выбор',
+    text: 'Тебе предложили два варианта первого шага в новой карьере:',
+    a: { label: 'Стабильный старт', text: 'Младшая позиция в стабильной компании — меньше денег, но понятный рост, менторство и безопасность пока осваиваю новое.' },
+    b: { label: 'Рискованный рывок', text: 'Фриланс или стартап с нуля — нестабильно, но быстрое обучение на практике, свобода и потенциально высокий потолок уже через год.' },
+  },
+  {
+    tag: '🔮 Через 5 лет',
+    text: 'Каким ты видишь себя в новой профессии через 5 лет?',
+    a: { label: 'Глубокая экспертиза', text: 'Признанным экспертом с глубокими знаниями в своей нише. Строю карьеру вертикально — углубляюсь, становлюсь незаменимым специалистом.' },
+    b: { label: 'Собственное дело', text: 'Основателем своего проекта или агентства, где я сам задаю правила. Хочу строить что-то своё, а не работать на чужую систему.' },
+  },
+];
+
+// ── STATE ──
+let current = 0;
+let answers = new Array(7).fill(null);
+let timerSec = 0;
+let timerInterval;
+
+// ── LOAD PROFILE ──
+const profile = JSON.parse(localStorage.getItem('futureSim_profile') || '{}');
+if (profile.name) {
+  document.getElementById('pbName').textContent = profile.name;
+  document.getElementById('pbAvatar').textContent = profile.avatar || '🧑';
+  document.getElementById('profileBadge').style.display = 'flex';
+}
+
+// ── INIT DOTS ──
+const dotsWrap = document.getElementById('qDots');
+const pbDotsWrap = document.getElementById('pbDots');
+for (let i = 0; i < 7; i++) {
+  const d = document.createElement('div');
+  d.className = 'q-dot';
+  d.id = 'qd' + i;
+  dotsWrap.appendChild(d);
+
+  const pb = document.createElement('div');
+  pb.className = 'pb-dot';
+  pb.id = 'pbd' + i;
+  pbDotsWrap.appendChild(pb);
+}
+
+// ── TIMER ──
+timerInterval = setInterval(() => {
+  timerSec++;
+  const m = Math.floor(timerSec / 60);
+  const s = timerSec % 60;
+  document.getElementById('timerDisplay').textContent = m + ':' + String(s).padStart(2, '0');
+}, 1000);
+
+// ── RENDER ──
+function render(dir = 1) {
+  const wrap = document.getElementById('qCardWrap');
+  const old = wrap.querySelector('.q-card');
+  const outAnim = dir > 0 ? 'slideOut' : 'slideInLeft';
+  const inAnim  = dir > 0 ? 'slideIn'  : 'slideInLeft';
+
+  if (old) {
+    old.style.animation = `${outAnim === 'slideOut' ? 'slideOut' : 'slideInLeft'} 0.28s ease forwards`;
+    if (dir < 0) old.style.animationName = 'slideOut';
+    setTimeout(() => {
+      wrap.innerHTML = buildCard();
+      bindOptions();
+    }, 260);
+  } else {
+    wrap.innerHTML = buildCard();
+    bindOptions();
+  }
+
+  // Update question number
+  document.getElementById('qNum').textContent = current + 1;
+
+  // Update dots
+  for (let i = 0; i < 7; i++) {
+    const d = document.getElementById('qd' + i);
+    const pb = document.getElementById('pbd' + i);
+    d.className = 'q-dot' + (i < current ? ' done' : i === current ? ' active' : '');
+    pb.className = 'pb-dot' + (i < current ? ' done' : i === current ? ' active' : '');
+  }
+
+  // Progress bar: step 3 of 5, questions take 42%–70%
+  const pct = 42 + Math.round((current / 7) * 28);
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  // Buttons
+  document.getElementById('btnPrev').disabled = current === 0;
+  document.getElementById('btnNext').textContent = current === 6 ? 'Получить результат →' : 'Следующий вопрос →';
+  document.getElementById('answerHint').classList.remove('show');
+}
+
+function buildCard() {
+  const q = QUESTIONS[current];
+  const sel = answers[current];
+  return `
+    <div class="q-card">
+      <div class="q-num-big">0${current + 1}</div>
+      <div class="q-tag">${q.tag}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="options">
+        <button class="option${sel === 'a' ? ' sel-a' : ''}" id="optA" onclick="selectAnswer('a')">
+          <div class="opt-letter">A</div>
+          <div class="opt-body">
+            <div class="opt-label">${q.a.label}</div>
+            <div class="opt-text">${q.a.text}</div>
+          </div>
+          <div class="opt-check">${sel === 'a' ? '✓' : ''}</div>
+        </button>
+        <button class="option${sel === 'b' ? ' sel-b' : ''}" id="optB" onclick="selectAnswer('b')">
+          <div class="opt-letter">B</div>
+          <div class="opt-body">
+            <div class="opt-label">${q.b.label}</div>
+            <div class="opt-text">${q.b.text}</div>
+          </div>
+          <div class="opt-check">${sel === 'b' ? '✓' : ''}</div>
+        </button>
+      </div>
+    </div>`;
+}
+
+function bindOptions() {
+  // Already bound via onclick in HTML — nothing extra needed
+}
+
+function selectAnswer(val) {
+  answers[current] = val;
+
+  const optA = document.getElementById('optA');
+  const optB = document.getElementById('optB');
+  if (!optA || !optB) return;
+
+  optA.className = 'option' + (val === 'a' ? ' sel-a' : '');
+  optA.querySelector('.opt-check').textContent = val === 'a' ? '✓' : '';
+  optB.className = 'option' + (val === 'b' ? ' sel-b' : '');
+  optB.querySelector('.opt-check').textContent = val === 'b' ? '✓' : '';
+
+  document.getElementById('answerHint').classList.remove('show');
+
+  // Auto-advance after short delay on mobile
+  if (window.innerWidth <= 600) {
+    setTimeout(() => { if (answers[current] !== null) nextQ(); }, 600);
+  }
+}
+
+function nextQ() {
+  if (answers[current] === null) {
+    document.getElementById('answerHint').classList.add('show');
+    shakeCard();
+    return;
+  }
+  if (current === 6) { finish(); return; }
+  current++;
+  render(1);
+}
+
+function prevQ() {
+  if (current === 0) return;
+  current--;
+  render(-1);
+}
+
+function shakeCard() {
+  const card = document.querySelector('.q-card');
+  if (!card) return;
+  card.style.transition = 'transform 0.07s ease';
+  const moves = [-8, 8, -6, 6, -3, 3, 0];
+  let i = 0;
+  const shake = setInterval(() => {
+    card.style.transform = `translateX(${moves[i]}px)`;
+    i++;
+    if (i >= moves.length) { clearInterval(shake); card.style.transform = ''; }
+  }, 70);
+}
+
+function finish() {
+  clearInterval(timerInterval);
+
+  const score = answers.filter(a => a === 'b').length;
+  localStorage.setItem('futureSim_score', score);
+  localStorage.setItem('futureSim_answers', JSON.stringify(answers));
+  localStorage.setItem('futureSim_time', timerSec);
+
+  // Fade out
+  document.querySelector('main').style.cssText = 'opacity:0;transform:scale(0.97);transition:opacity 0.4s,transform 0.4s';
+  setTimeout(() => { window.location.href = 'result.html'; }, 400);
+}
+
+// Init
+render(1);
+</script>
+</body>
+</html>
